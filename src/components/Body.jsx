@@ -29,6 +29,12 @@ const SearchAndFilterDiv = styled.div`
   height: 15vh;
   width: 100%;
   font-family: ${(props) => props.theme["font-family"]};
+
+  @media only screen and (max-width: 1280px) {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+  }
 `;
 
 const CountriesDiv = styled.div`
@@ -40,6 +46,16 @@ const CountriesDiv = styled.div`
   background: ${(props) => props.theme[props.mode]["background"]};
   min-height: 75vh;
   width: 100%;
+
+  @media only screen and (max-width: 1500px) {
+    grid-template-columns: repeat(3, 360px);
+  }
+  @media only screen and (max-width: 1150px) {
+    grid-template-columns: repeat(2, 360px);
+  }
+  @media only screen and (max-width: 750px) {
+    grid-template-columns: repeat(1, 360px);
+  }
 `;
 
 const SearchDiv = styled.div`
@@ -74,8 +90,9 @@ const RegionSelector = styled.select`
   background: ${(props) => props.theme[props.mode]["elements"]};
   height: 5vh;
   width: 15vw;
-  margin-right: 5vw;
   font-size: 20px;
+
+  margin-left: 5vw;
   margin-right: 5vw;
   padding-left: 1vw;
   padding-right: 1vw;
@@ -124,9 +141,6 @@ export default function Body({ theme, mode, onOpenCountry, countries }) {
         countriesFilteredBySearch.includes(country)
       )
     );
-
-    console.log(`Search value= ${searchInputValue}`);
-    console.log(`Filter region= ${filterRegion}`);
   }, [searchInputValue, filterRegion]);
 
   return (
@@ -174,7 +188,7 @@ export default function Body({ theme, mode, onOpenCountry, countries }) {
             countryDetails={country}
             onClick={() => {
               onOpenCountry(country);
-              history.push(`/${country["name"]}`);
+              history.push(`/${country["alpha3Code"]}`);
             }}
             key={filteredCountries.indexOf(country)}
           />

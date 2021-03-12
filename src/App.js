@@ -76,7 +76,7 @@ function App() {
               )}
             />
             <Route
-              path="/:countryName"
+              path="/:countryCode"
               component={() => (
                 <Country
                   mode={mode}

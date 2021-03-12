@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
@@ -127,126 +127,188 @@ export default function Country({
   onOpenCountry,
 }) {
   const history = useHistory();
+  const [openedCountry, setOpenedCountry] = useState(openCountry);
+  const [detailsOfAllCountries, setDetailsOfAllCountries] = useState(countries);
 
-  console.log(`Opened country: ${openCountry["name"]}`);
-  const currencies = openCountry["currencies"];
-  const languages = openCountry["languages"];
-  const borderCountriesCodes = openCountry["borders"];
+  const [isLoading, setIsLoading] = useState(true);
+  const [badUrlError, setBadUrlError] = useState(false);
 
-  let borderCountries = [];
+  useEffect(() => {
+    const openedCountryAlpha3Code = window.location.pathname.slice(
+      1,
+      window.location.pathname.length
+    );
 
-  borderCountriesCodes.forEach((alpha3Code) => {
-    for (let i = 0; i < countries.length; i++) {
-      if (countries[i]["alpha3Code"] === alpha3Code) {
-        borderCountries.push(countries[i]);
-        i = countries.length;
+    for (let i = 0; i < detailsOfAllCountries.length; i++) {
+      if (detailsOfAllCountries[i]["alpha3Code"] === openedCountryAlpha3Code) {
+        setOpenedCountry(detailsOfAllCountries[i]);
+        setIsLoading(false);
+        return;
       }
+      setBadUrlError(true);
     }
-  });
+  }, [detailsOfAllCountries]);
 
-  borderCountries.forEach((country) => {
-    console.log(country["name"]);
-  });
+  if (badUrlError) {
+    return (
+      <div>
+        <BackButtonBgDiv mode={mode}>
+          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
+            <img
+              src={mode === "light" ? backLight : backDark}
+              alt="Logo"
+              height="35"
+              width="70"
+              style={{
+                marginLeft: "15px",
+              }}
+            />
+            <BackText mode={mode}>Back</BackText>
+          </BackButtonDiv>
+        </BackButtonBgDiv>
+        <CountryDetailsDiv mode={mode}>
+          <h1>Invalid URL, press back to return to the homepage.</h1>
+        </CountryDetailsDiv>
+      </div>
+    );
+  } else if (isLoading) {
+    return (
+      <div>
+        <BackButtonBgDiv mode={mode}>
+          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
+            <img
+              src={mode === "light" ? backLight : backDark}
+              alt="Logo"
+              height="35"
+              width="70"
+              style={{
+                marginLeft: "15px",
+              }}
+            />
+            <BackText mode={mode}>Back</BackText>
+          </BackButtonDiv>
+        </BackButtonBgDiv>
+        <CountryDetailsDiv mode={mode}>
+          <h1>Loading...</h1>
+        </CountryDetailsDiv>
+      </div>
+    );
+  } else {
+    const currencies = openedCountry["currencies"];
+    const languages = openedCountry["languages"];
+    const borderCountriesCodes = openedCountry["borders"];
 
-  return (
-    <div>
-      <BackButtonBgDiv mode={mode}>
-        <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
-          <img
-            src={mode === "light" ? backLight : backDark}
-            alt="Logo"
-            height="35"
-            width="70"
-            style={{
-              marginLeft: "15px",
-            }}
-          />
-          <BackText mode={mode}>Back</BackText>
-        </BackButtonDiv>
-      </BackButtonBgDiv>
-      <CountryDetailsDiv mode={mode}>
-        <FlagDiv mode={mode}>
-          <img
-            src={openCountry["flag"]}
-            alt="Logo"
-            width="100%"
-            style={{
-              borderTopLeftRadius: "5px",
-              borderTopRightRadius: "5px",
-            }}
-          />
-        </FlagDiv>
-        <DetailsDiv>
-          <h1>{openCountry["name"]}</h1>
+    let borderCountries = [];
 
-          <DetailsMainDiv>
-            <DetailsSubDiv>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Native name:</strong>
-                {openCountry["nativeName"]}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Population:</strong>
-                {openCountry["population"]}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Region:</strong>
-                {openCountry["region"]}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Sub Region:</strong>
-                {openCountry["subregion"]}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Capital:</strong>
-                {openCountry["capital"]}
-              </DetailsParagraph>
-            </DetailsSubDiv>
-            <DetailsSubDiv>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>
-                  Top Level Domain:
-                </strong>
-                {openCountry["topLevelDomain"][0]}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Currencies:</strong>
-                {currencies.map(
-                  (currency) =>
-                    ` ${currency["name"]}${
-                      currencies.indexOf(currency) === currencies.length - 1
-                        ? ""
-                        : ", "
-                    }`
-                )}
-              </DetailsParagraph>
-              <DetailsParagraph>
-                <strong style={{ marginRight: ".5rem" }}>Languages:</strong>
-                {languages.map(
-                  (language) =>
-                    ` ${language["name"]}${
-                      languages.indexOf(language) === languages.length - 1
-                        ? ""
-                        : ", "
-                    }`
-                )}
-              </DetailsParagraph>
-            </DetailsSubDiv>
-          </DetailsMainDiv>
+    borderCountriesCodes.forEach((alpha3Code) => {
+      for (let i = 0; i < countries.length; i++) {
+        if (countries[i]["alpha3Code"] === alpha3Code) {
+          borderCountries.push(countries[i]);
+          i = countries.length;
+        }
+      }
+    });
 
-          <BorderCountriesDiv>
-            <h3>Border countries: </h3>
-            {borderCountries.map((country) => (
-              <BorderCountryButton
-                mode={mode}
-                onClick={() => onOpenCountry(country)}
-              >
-                {country["name"]}
-              </BorderCountryButton>
-            ))}
-          </BorderCountriesDiv>
-        </DetailsDiv>
-      </CountryDetailsDiv>
-    </div>
-  );
+    return (
+      <div>
+        <BackButtonBgDiv mode={mode}>
+          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
+            <img
+              src={mode === "light" ? backLight : backDark}
+              alt="Logo"
+              height="35"
+              width="70"
+              style={{
+                marginLeft: "15px",
+              }}
+            />
+            <BackText mode={mode}>Back</BackText>
+          </BackButtonDiv>
+        </BackButtonBgDiv>
+        <CountryDetailsDiv mode={mode}>
+          <FlagDiv mode={mode}>
+            <img
+              src={openedCountry["flag"]}
+              alt="Logo"
+              width="100%"
+              style={{
+                borderTopLeftRadius: "5px",
+                borderTopRightRadius: "5px",
+              }}
+            />
+          </FlagDiv>
+          <DetailsDiv>
+            <h1>{openedCountry["name"]}</h1>
+
+            <DetailsMainDiv>
+              <DetailsSubDiv>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Native name:</strong>
+                  {openedCountry["nativeName"]}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Population:</strong>
+                  {openedCountry["population"]}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Region:</strong>
+                  {openedCountry["region"]}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Sub Region:</strong>
+                  {openedCountry["subregion"]}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Capital:</strong>
+                  {openedCountry["capital"]}
+                </DetailsParagraph>
+              </DetailsSubDiv>
+              <DetailsSubDiv>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>
+                    Top Level Domain:
+                  </strong>
+                  {openedCountry["topLevelDomain"][0]}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Currencies:</strong>
+                  {currencies.map(
+                    (currency) =>
+                      ` ${currency["name"]}${
+                        currencies.indexOf(currency) === currencies.length - 1
+                          ? ""
+                          : ", "
+                      }`
+                  )}
+                </DetailsParagraph>
+                <DetailsParagraph>
+                  <strong style={{ marginRight: ".5rem" }}>Languages:</strong>
+                  {languages.map(
+                    (language) =>
+                      ` ${language["name"]}${
+                        languages.indexOf(language) === languages.length - 1
+                          ? ""
+                          : ", "
+                      }`
+                  )}
+                </DetailsParagraph>
+              </DetailsSubDiv>
+            </DetailsMainDiv>
+
+            <BorderCountriesDiv>
+              <h3>Border countries: </h3>
+              {borderCountries.map((country) => (
+                <BorderCountryButton
+                  mode={mode}
+                  onClick={() => onOpenCountry(country)}
+                >
+                  {country["name"]}
+                </BorderCountryButton>
+              ))}
+            </BorderCountriesDiv>
+          </DetailsDiv>
+        </CountryDetailsDiv>
+      </div>
+    );
+  }
 }
