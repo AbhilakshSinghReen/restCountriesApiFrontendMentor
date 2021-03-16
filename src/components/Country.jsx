@@ -1,109 +1,172 @@
 import React, { useEffect, useState } from "react";
 
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 
-import backLight from "../icons/backLight.png";
-import backDark from "../icons/backDark.png";
+import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
+
+import { numberWithCommas } from "../helpers";
 
 const BackButtonBgDiv = styled.div`
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["background"]};
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["background"]};
-  height: 15vh;
+
   width: 100%;
+  height: 15vh;
 `;
 
 const BackButtonDiv = styled.div`
+  font-family: ${(props) => props.theme["font-family"]};
+  background: ${(props) => props.theme["elements"]};
+
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-left: 5vw;
-  background: ${(props) => props.theme[props.mode]["elements"]};
-  height: 50px;
+
   width: 150px;
+  height: 50px;
+
+  margin-left: 5vw;
   border-radius: 5px;
 
   &:hover {
-    background: ${(props) => props.theme[props.mode]["background"]};
+    background: ${(props) => props.theme["background"]};
     cursor: pointer;
   }
-  font-family: ${(props) => props.theme["font-family"]};
 `;
 
 const BackText = styled.h1`
   font-size: 20px;
+  color: ${(props) => props.theme["color"]};
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   height: 35px;
+
+  margin-left: 10px;
+  margin-right: 15px;
+
   border: none;
   outline: none;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  margin-right: 15px;
-  margin-left: 10px;
 `;
 
 const CountryDetailsDiv = styled.div`
+  font-family: ${(props) => props.theme["font-family"]};
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["background"]};
+
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["background"]};
-  min-height: 75vh;
+
   width: 100%;
-  font-family: ${(props) => props.theme["font-family"]};
+  min-height: 75vh;
+
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
 `;
 
 const FlagDiv = styled.div`
-  margin-top: 5vh;
   width: 40vw;
   height: 40vw;
+
+  margin-top: 5vh;
+
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    width: 80vw;
+    height: 54vw;
+  }
 `;
 
 const DetailsDiv = styled.div`
-  margin-top: 5vh;
-  width: 40vw;
-  height: 40vw;
-
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
+  width: 40vw;
+  height: 40vw;
+
+  margin-top: 5vh;
   padding-left: 2vw;
+
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    width: 80vw;
+    height: 54vw;
+  }
 `;
 
 const DetailsMainDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
 `;
 
 const DetailsSubDiv = styled.div`
-  width: 20vw;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
+  width: 20vw;
+
+  @media only screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 const BorderCountriesDiv = styled.div`
-  width: 40vw;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+
+  width: 40vw;
+
+  @media only screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 const BorderCountryButton = styled.button`
   font-size: 15px;
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["elements"]};
+
+  margin-right: 7px;
   padding: 5px;
-  margin-left: 7px;
-  border-radius: 2px;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["elements"]};
   border: none;
+  border-radius: 2px;
   outline: none;
+
+  @media only screen and (max-width: 1024px) {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
 
   &:hover {
     cursor: pointer;
@@ -112,16 +175,20 @@ const BorderCountryButton = styled.button`
 
 const DetailsParagraph = styled.p`
   font-size: 15px;
+
   display: flex;
-  margin-left: 10px;
 
   margin-top: 0px;
+  margin-left: 10px;
   margin-bottom: 0px;
+
+  @media only screen and (max-width: 1024px) {
+    margin-left: 0px;
+  }
 `;
 
 export default function Country({
   theme,
-  mode,
   openCountry,
   countries,
   onOpenCountry,
@@ -145,28 +212,20 @@ export default function Country({
         setIsLoading(false);
         return;
       }
-      setBadUrlError(true);
     }
+    setBadUrlError(true);
   }, [detailsOfAllCountries]);
 
   if (badUrlError) {
     return (
       <div>
-        <BackButtonBgDiv mode={mode}>
-          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
-            <img
-              src={mode === "light" ? backLight : backDark}
-              alt="Logo"
-              height="35"
-              width="70"
-              style={{
-                marginLeft: "15px",
-              }}
-            />
-            <BackText mode={mode}>Back</BackText>
+        <BackButtonBgDiv>
+          <BackButtonDiv onClick={() => history.push("/")}>
+            <KeyboardBackspaceIcon />
+            <BackText>Back</BackText>
           </BackButtonDiv>
         </BackButtonBgDiv>
-        <CountryDetailsDiv mode={mode}>
+        <CountryDetailsDiv>
           <h1>Invalid URL, press back to return to the homepage.</h1>
         </CountryDetailsDiv>
       </div>
@@ -174,21 +233,13 @@ export default function Country({
   } else if (isLoading) {
     return (
       <div>
-        <BackButtonBgDiv mode={mode}>
-          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
-            <img
-              src={mode === "light" ? backLight : backDark}
-              alt="Logo"
-              height="35"
-              width="70"
-              style={{
-                marginLeft: "15px",
-              }}
-            />
-            <BackText mode={mode}>Back</BackText>
+        <BackButtonBgDiv>
+          <BackButtonDiv onClick={() => history.push("/")}>
+            <KeyboardBackspaceIcon />
+            <BackText>Back</BackText>
           </BackButtonDiv>
         </BackButtonBgDiv>
-        <CountryDetailsDiv mode={mode}>
+        <CountryDetailsDiv>
           <h1>Loading...</h1>
         </CountryDetailsDiv>
       </div>
@@ -211,22 +262,14 @@ export default function Country({
 
     return (
       <div>
-        <BackButtonBgDiv mode={mode}>
-          <BackButtonDiv mode={mode} onClick={() => history.push("/")}>
-            <img
-              src={mode === "light" ? backLight : backDark}
-              alt="Logo"
-              height="35"
-              width="70"
-              style={{
-                marginLeft: "15px",
-              }}
-            />
-            <BackText mode={mode}>Back</BackText>
+        <BackButtonBgDiv>
+          <BackButtonDiv onClick={() => history.push("/")}>
+            <KeyboardBackspaceIcon />
+            <BackText>Back</BackText>
           </BackButtonDiv>
         </BackButtonBgDiv>
-        <CountryDetailsDiv mode={mode}>
-          <FlagDiv mode={mode}>
+        <CountryDetailsDiv>
+          <FlagDiv>
             <img
               src={openedCountry["flag"]}
               alt="Logo"
@@ -248,7 +291,7 @@ export default function Country({
                 </DetailsParagraph>
                 <DetailsParagraph>
                   <strong style={{ marginRight: ".5rem" }}>Population:</strong>
-                  {openedCountry["population"]}
+                  {numberWithCommas(openedCountry["population"])}
                 </DetailsParagraph>
                 <DetailsParagraph>
                   <strong style={{ marginRight: ".5rem" }}>Region:</strong>
@@ -299,8 +342,10 @@ export default function Country({
               <h3>Border countries: </h3>
               {borderCountries.map((country) => (
                 <BorderCountryButton
-                  mode={mode}
-                  onClick={() => onOpenCountry(country)}
+                  onClick={() => {
+                    onOpenCountry(country);
+                    history.push(`/${country["alpha3Code"]}`);
+                  }}
                 >
                   {country["name"]}
                 </BorderCountryButton>

@@ -1,34 +1,37 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
+
+import SearchIcon from "@material-ui/icons/Search";
 
 import CountryCard from "./CountryCard";
 
-import searchLight from "../icons/searchLight.png";
-import searchDark from "../icons/searchDark.png";
-
 const BodyDiv = styled.div`
+  font-family: ${(props) => props.theme["font-family"]};
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["background"]};
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["background"]};
+
   min-height: 90vh;
-  font-family: ${(props) => props.theme["font-family"]};
 `;
 
 const SearchAndFilterDiv = styled.div`
+  font-family: ${(props) => props.theme["font-family"]};
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["background"]};
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["background"]};
-  height: 15vh;
+
   width: 100%;
-  font-family: ${(props) => props.theme["font-family"]};
+  height: 15vh;
 
   @media only screen and (max-width: 1280px) {
     flex-direction: column;
@@ -38,70 +41,94 @@ const SearchAndFilterDiv = styled.div`
 `;
 
 const CountriesDiv = styled.div`
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["background"]};
+
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(4, 360px);
+  justify-items: center;
+  grid-template-columns: repeat(4, 350px);
   grid-auto-rows: 350px;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["background"]};
-  min-height: 75vh;
+
   width: 100%;
+  min-height: 75vh;
 
   @media only screen and (max-width: 1500px) {
-    grid-template-columns: repeat(3, 360px);
+    grid-template-columns: repeat(3, 350px);
   }
   @media only screen and (max-width: 1150px) {
-    grid-template-columns: repeat(2, 360px);
+    grid-template-columns: repeat(2, 350px);
   }
   @media only screen and (max-width: 750px) {
-    grid-template-columns: repeat(1, 360px);
+    grid-template-columns: repeat(1, 350px);
   }
 `;
 
 const SearchDiv = styled.div`
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["elements"]};
+
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["elements"]};
-  height: 5vh;
+
   width: 30vw;
+  height: 5vh;
+
   margin-left: 5vw;
+  margin-right: 5vw;
   border-radius: 5px;
+
+  @media only screen and (max-width: 1280px) {
+    width: 90vw;
+    max-width: 400px;
+  }
 `;
 
 const SearchInput = styled.input`
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["elements"]};
+  font-size: 20px;
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["elements"]};
+
+  width: 25vw;
   height: 35px;
+
   border: none;
   outline: none;
-  font-size: 20px;
-  margin-left: 1vw;
-  width: 25vw;
+
   ::placeholder {
-    color: ${(props) => props.theme[props.mode]["color"]};
+    color: ${(props) => props.theme["color"]};
+  }
+
+  @media only screen and (max-width: 1280px) {
+    width: 80vw;
   }
 `;
 
 const RegionSelector = styled.select`
-  color: ${(props) => props.theme[props.mode]["color"]};
-  background: ${(props) => props.theme[props.mode]["elements"]};
-  height: 5vh;
-  width: 15vw;
   font-size: 20px;
+  color: ${(props) => props.theme["color"]};
+  background: ${(props) => props.theme["elements"]};
+
+  width: 15vw;
+  height: 5vh;
 
   margin-left: 5vw;
   margin-right: 5vw;
   padding-left: 1vw;
   padding-right: 1vw;
   border: none;
-  outline: none;
   border-radius: 5px;
+  outline: none;
+
+  @media only screen and (max-width: 1280px) {
+    width: 50vw;
+    max-width: 300px;
+  }
 `;
 
-export default function Body({ theme, mode, onOpenCountry, countries }) {
+export default function Body({ theme, onOpenCountry, countries }) {
   const [searchInputValue, setSearchInputValue] = useState("");
   const [filterRegion, setFilterRegion] = useState("Filter by Region");
 
@@ -144,20 +171,16 @@ export default function Body({ theme, mode, onOpenCountry, countries }) {
   }, [searchInputValue, filterRegion]);
 
   return (
-    <BodyDiv mode={mode}>
-      <SearchAndFilterDiv mode={mode}>
-        <SearchDiv mode={mode}>
-          <img
-            src={mode === "light" ? searchLight : searchDark}
-            alt="Logo"
-            height="35"
-            width="70"
+    <BodyDiv>
+      <SearchAndFilterDiv>
+        <SearchDiv>
+          <SearchIcon
             style={{
-              marginLeft: "15px",
+              width: "10vw",
+              maxWidth: "50px",
             }}
           />
           <SearchInput
-            mode={mode}
             type="text"
             placeholder="Search for a country..."
             value={searchInputValue}
@@ -166,7 +189,6 @@ export default function Body({ theme, mode, onOpenCountry, countries }) {
         </SearchDiv>
 
         <RegionSelector
-          mode={mode}
           name="cars"
           id="cars"
           multiple={false}
@@ -181,10 +203,9 @@ export default function Body({ theme, mode, onOpenCountry, countries }) {
         </RegionSelector>
       </SearchAndFilterDiv>
 
-      <CountriesDiv mode={mode}>
+      <CountriesDiv>
         {filteredCountries.map((country) => (
           <CountryCard
-            mode={mode}
             countryDetails={country}
             onClick={() => {
               onOpenCountry(country);

@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from "react";
+
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import axios from "axios";
+import { ThemeProvider } from "styled-components";
 
 import "./App.css";
-import styled, { ThemeProvider } from "styled-components";
 
 import Header from "./components/Header";
 import Body from "./components/Body";
 import Country from "./components/Country";
 
-import H1 from "./elements/H1";
-
-const theme = {
+const lightModeTheme = {
   "font-family": "sans-serif",
-  light: {
-    color: "rgb(17, 21, 23)",
-    elements: "rgb(255, 255, 255)",
-    background: "rgb(225,225,225)",
-  },
-  dark: {
-    color: "rgb(255, 255, 255)",
-    elements: "rgb(43, 57, 69)",
-    background: "rgb(32,44,55)",
-  },
+  color: "rgb(17, 21, 23)",
+  elements: "rgb(255, 255, 255)",
+  background: "rgb(225,225,225)",
+};
+
+const darkModeTheme = {
+  "font-family": "sans-serif",
+  color: "rgb(255, 255, 255)",
+  elements: "rgb(43, 57, 69)",
+  background: "rgb(32,44,55)",
 };
 
 function App() {
-  const [mode, setMode] = useState(
-    localStorage.getItem("mode") === null ? "dark" : "light"
-  );
-  const [openCountry, setOpenCountry] = useState([]);
+  const loadedMode = localStorage.getItem("mode");
 
+  const [mode, setMode] = useState(loadedMode === null ? "dark" : loadedMode);
+  const [openCountry, setOpenCountry] = useState([]);
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
@@ -51,15 +49,13 @@ function App() {
   }, [mode]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mode === "dark" ? darkModeTheme : lightModeTheme}>
       <div className="App">
         <Header
-          mode={mode}
           toggleMode={() => {
             setMode(mode === "light" ? "dark" : "light");
           }}
         />
-
         <BrowserRouter>
           <Switch>
             <Route
@@ -67,7 +63,6 @@ function App() {
               path="/"
               component={() => (
                 <Body
-                  mode={mode}
                   countries={countries}
                   onOpenCountry={(country) => {
                     setOpenCountry(country);
@@ -79,7 +74,6 @@ function App() {
               path="/:countryCode"
               component={() => (
                 <Country
-                  mode={mode}
                   openCountry={openCountry}
                   countries={countries}
                   onOpenCountry={(country) => {
